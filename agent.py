@@ -6,7 +6,7 @@ import pandas as pd
 
 VERBOSE = False
 DEBUG = False
-DEFAULT_ALPHA = 0.5
+DEFAULT_ALPHA = 0.95
 DEFAULT_EPSILON_A = 0.95
 DISPLAY = True
 
@@ -96,10 +96,14 @@ class LearningAgent(Agent):
 
     def maxQ_index(self, state):
         """
-        Return index of action with largest Q for a given state.
+        Return index of action with largest Q for a given state. Randomly select one key, if
+        multiple have the same max value.
         """
         key = self.state_key(state)
-        return max(self.Q[key].iteritems(), key=operator.itemgetter(1))[0]
+        max_value = max(self.Q[key].values())
+        maxQs = [k for k, v in self.Q[key].items() if v == max_value]
+        maxQ_random = random.choice(maxQs)
+        return maxQ_random
 
 
     def get_maxQ(self, state):
@@ -344,7 +348,7 @@ def run():
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(n_test=50)
+    sim.run(n_test=10)
 
 def calculate_safety(data):
 	""" Calculates the safety rating of the smartcab during testing. """
